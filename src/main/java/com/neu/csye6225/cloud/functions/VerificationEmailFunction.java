@@ -62,7 +62,7 @@ public class VerificationEmailFunction implements BackgroundFunction<PubSubMessa
         + "\t<p style=\"font-size:30px;\">"
         + "http://"
         + DOMAIN
-        + "/v1/user/verify?token="
+        + ":8080/v1/user/verify?token="
         + token
         + "</p>\n"
         + "</body>\n"
