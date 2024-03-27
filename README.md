@@ -1,2 +1,2 @@
 # serverless
-GCP Serverless - test
+GCP Serverless
