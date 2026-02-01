@@ -1,7 +1,8 @@
 # Cloud Application - Serverless function
 
-- [IaC Infrastructure Repository](https://github.com/GokulaKrishnanRGK/tf-gcp-infra)
 - [Application Server Repository](https://github.com/GokulaKrishnanRGK/cloud-webapp-server)
+- [IaC Infrastructure Repository in GCP](https://github.com/GokulaKrishnanRGK/tf-gcp-infra)
+- [IaC Infrastructure Repository in AWS](https://github.com/GokulaKrishnanRGK/tf-aws-infra)
 
 ## Repo Details
 - Send email verification on sign-up
