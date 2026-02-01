@@ -21,7 +21,7 @@ public class VerifyDao {
 
   protected static Connection getConnection() throws ClassNotFoundException, SQLException {
     Class.forName("com.mysql.cj.jdbc.Driver");
-    if(connection == null) {
+    if (connection == null) {
       logger.info("DB_URL: {}, USERNAME: {}, PASSWORD: {}", DB_URL, USERNAME, PASSWORD);
       connection = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
     }
@@ -30,22 +30,32 @@ public class VerifyDao {
 
   public static Verify getVerify(String username, String token) throws SQLException, ClassNotFoundException {
     Connection conn = getConnection();
-    String sql = "Select v.*, u.username FROM verify v"
-        + " JOIN user u ON u.id = v.user_id"
-        + " WHERE u.username=? AND v.token=?"
-        + " group by v.id";
-    PreparedStatement preparedStatement = conn.prepareStatement(sql);
-    preparedStatement.setString(1, username);
-    preparedStatement.setString(2, token);
-    ResultSet rs = preparedStatement.executeQuery();
-    rs.next();
-    Verify verify = new Verify();
-    verify.setId(rs.getLong("id"));
-    verify.setVerified(rs.getBoolean("is_verified"));
-    verify.setToken(rs.getString("token"));
-    verify.setGeneratedTime(rs.getTimestamp("generated_time"));
-    verify.setUsername(rs.getString("username"));
-    return verify;
+    String sql = "SELECT v.*, u.username FROM verify v "
+        + "JOIN user u ON u.id = v.user_id "
+        + "WHERE u.username=? AND v.token=? "
+        + "LIMIT 1";
+
+    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+      ps.setString(1, username);
+      ps.setString(2, token);
+
+      try (ResultSet rs = ps.executeQuery()) {
+        if (!rs.next()) {
+          return null;
+        }
+
+        Verify verify = new Verify();
+        verify.setId(rs.getLong("id"));
+        verify.setVerified(rs.getBoolean("is_verified"));
+        verify.setToken(rs.getString("token"));
+        verify.setGeneratedTime(rs.getTimestamp("generated_time"));
+        verify.setUsername(rs.getString("username"));
+        return verify;
+      }
+    } catch (SQLException e) {
+      logger.error(e.getMessage());
+      throw e;
+    }
   }
 
   public static boolean updateGeneratedTime(String token) throws SQLException, ClassNotFoundException {
